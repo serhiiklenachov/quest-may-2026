@@ -380,10 +380,15 @@
                         showSuccess();
                     } else {
                         // Increase speed of remaining items
+                        const maxSpeed = 8;
                         activeItems.forEach(item => {
                             if (!item.isSorted && !item.isDragging) {
                                 item.vx *= 1.25;
                                 item.vy *= 1.25;
+                                
+                                // Limit max speed
+                                if (Math.abs(item.vx) > maxSpeed) item.vx = Math.sign(item.vx) * maxSpeed;
+                                if (Math.abs(item.vy) > maxSpeed) item.vy = Math.sign(item.vy) * maxSpeed;
                             }
                         });
                     }
