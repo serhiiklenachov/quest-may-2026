@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шкільний Квест - Травень 2026</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --box-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent: #38bdf8;
+            --hover: #0ea5e9;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        h1 {
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .task-card {
+            background-color: var(--box-bg);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+        }
+        .task-card h2 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+        .task-card p {
+            color: #94a3b8;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Локація: Інформатика</h1>
+    <div class="task-grid">
+        <a href="task1.html" class="task-card">
+            <h2>Скриня №1</h2>
+            <p>Шифр Цезаря</p>
+        </a>
+        <a href="task2.html" class="task-card">
+            <h2>Скриня №2</h2>
+            <p>Дешифрування алгоритму</p>
+        </a>
+        <a href="task3.html" class="task-card">
+            <h2>Скриня №3</h2>
+            <p>Сортування Brawl Stars</p>
+        </a>
+        <a href="task4.html" class="task-card">
+            <h2>Скриня №4</h2>
+            <p>Знайди пару</p>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скриня №2</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --box-bg: #1e293b;
+            --text-color: #f8fafc;
+            --block-var: #f59e0b; /* orange */
+            --block-loop: #eab308; /* yellow */
+            --block-if: #3b82f6; /* blue */
+            --block-action: #10b981; /* green */
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 2rem 0;
+        }
+        .container {
+            background-color: var(--box-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px rgba(139, 92, 246, 0.2);
+            max-width: 650px;
+            width: 90%;
+            border: 1px solid #334155;
+            position: relative;
+            z-index: 10;
+        }
+        h1 {
+            color: var(--accent);
+            margin-top: 0;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            font-size: 2.5rem;
+        }
+        p.desc {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Блоки алгоритму */
+        .algorithm-wrapper {
+            background: #0f172a;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #475569;
+            margin-bottom: 2rem;
+        }
+        
+        .block {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 1.1rem;
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .block-var { background-color: var(--block-var); color: #fff; }
+        .block-loop { background-color: var(--block-loop); color: #fff; }
+        .block-if { background-color: var(--block-if); color: #fff; }
+        .block-action { background-color: var(--block-action); color: #fff; }
+        
+        .nested-1 { margin-left: 30px; margin-top: -4px; border-top-left-radius: 0; }
+        .nested-2 { margin-left: 60px; margin-top: -4px; border-top-left-radius: 0; }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        input {
+            padding: 12px 20px;
+            font-size: 1.5rem;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            width: 40%;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        .error-border {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+        }
+        .error-msg {
+            color: var(--error);
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .success-message {
+            display: none;
+            font-size: 2.5rem;
+            color: var(--success);
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+            animation: pulseSuccess 1.5s infinite alternate;
+        }
+
+        @keyframes pulseSuccess {
+            0% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+            100% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 30px rgba(34, 197, 94, 0.9); }
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti"></canvas>
+    
+    <div class="container" id="game-container">
+        <h1>Скриня №2: Дешифрування алгоритму</h1>
+        
+        <div id="algo-section">
+            <div class="algorithm-wrapper">
+                <div class="block block-var">Змінна X = 15</div>
+                
+                <div class="block block-loop">Початок циклу: Повторити 3 рази</div>
+                <div class="block block-action nested-1">X = X + 9</div>
+                <div class="block block-loop">Кінець циклу</div>
+                
+                <div class="block block-if">Якщо X ділиться на 2 без остачі (парне), тоді:</div>
+                <div class="block block-action nested-1">X = X / 2</div>
+                <div class="block block-action nested-1">X = X * 3</div>
+                <div class="block block-if">Інакше:</div>
+                <div class="block block-action nested-1">X = X + 100</div>
+                
+                <div class="block block-if">Якщо X > 50 ТА X < 70, тоді:</div>
+                <div class="block block-action nested-1">X = X + 4</div>
+                <div class="block block-if">Інакше:</div>
+                <div class="block block-action nested-1">X = 0</div>
+            </div>
+
+            <p class="desc">Виконай цей алгоритм крок за кроком та введи фінальне значення змінної X, щоб зламати скриню.</p>
+            
+            <div class="input-group">
+                <input type="number" id="code-input" placeholder="Код (число)" autocomplete="off">
+                <button onclick="checkCode()">Ввести код</button>
+            </div>
+            <div class="error-msg" id="error-msg">Помилка обчислень, спробуй ще раз!</div>
+        </div>
+        
+        <div class="success-message" id="success-message">
+            Доступ дозволено!<br>Код: six seven
+        </div>
+    </div>
+
+    <!-- Аудіо файл -->
+    <audio id="success-sound" src="mp3/67.mp3" preload="auto"></audio>
+
+    <script>
+        const input = document.getElementById('code-input');
+        const container = document.getElementById('game-container');
+        const algoSection = document.getElementById('algo-section');
+        const successMessage = document.getElementById('success-message');
+        const errorMsg = document.getElementById('error-msg');
+        const successSound = document.getElementById('success-sound');
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkCode();
+        });
+
+        function checkCode() {
+            const val = input.value.trim();
+            if (val === '67') {
+                // Success
+                algoSection.style.display = 'none';
+                successMessage.style.display = 'block';
+                successSound.play().catch(e => console.log("Audio play prevented:", e));
+                startConfetti();
+            } else {
+                // Error
+                container.classList.remove('shake');
+                input.classList.remove('error-border');
+                errorMsg.style.display = 'none';
+                
+                // Trigger reflow
+                void container.offsetWidth;
+                
+                container.classList.add('shake');
+                input.classList.add('error-border');
+                errorMsg.style.display = 'block';
+                input.value = '';
+                
+                setTimeout(() => {
+                    input.classList.remove('error-border');
+                }, 1000);
+            }
+        }
+
+        // --- Simple Confetti Implementation ---
+        function startConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+
+            for (let i = 0; i < 150; i++) {
+                pieces.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + 100,
+                    vx: (Math.random() - 0.5) * 20,
+                    vy: (Math.random() - 1) * 20 - 5,
+                    size: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                
+                pieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.5; // gravity
+                    p.rotation += p.rotationSpeed;
+                    
+                    if (p.y < canvas.height) active = true;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (active) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            animate();
+        }
+        
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скриня №3</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --box-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent: #ec4899;
+            --accent-hover: #db2777;
+            --cactus-color: #10b981;
+            --candy-color: #f43f5e;
+            --success: #22c55e;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 2rem 0;
+            user-select: none;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            z-index: 10;
+        }
+        h1 {
+            color: var(--accent);
+            margin-top: 0;
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+            font-size: 2.5rem;
+        }
+        p {
+            font-size: 1.2rem;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 90%;
+            max-width: 800px;
+            z-index: 10;
+        }
+
+        .items-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            border: 2px dashed #475569;
+            min-height: 100px;
+        }
+
+        .item {
+            font-size: 3rem;
+            cursor: grab;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            touch-action: none;
+        }
+        .item:active {
+            cursor: grabbing;
+            transform: scale(1.2);
+        }
+
+        .boxes {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .box {
+            flex: 1;
+            background-color: var(--box-bg);
+            border: 3px solid #334155;
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 10px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .box::before {
+            content: attr(data-title);
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-color);
+            padding: 0 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+        .box.drag-over {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        #cactus-box { border-color: var(--cactus-color); }
+        #cactus-box::before { color: var(--cactus-color); }
+        #cactus-box.drag-over { background-color: rgba(16, 185, 129, 0.1); }
+
+        #candy-box { border-color: var(--candy-color); }
+        #candy-box::before { color: var(--candy-color); }
+        #candy-box.drag-over { background-color: rgba(244, 63, 94, 0.1); }
+
+        .success-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .success-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .success-message {
+            font-size: 3rem;
+            color: var(--success);
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 30px rgba(34, 197, 94, 0.8);
+            transform: scale(0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .success-overlay.active .success-message {
+            transform: scale(1);
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti"></canvas>
+    
+    <div class="header">
+        <h1>Скриня №3: Сортування інвентарю</h1>
+        <p>Перетягни всі 🌵 у коробку "Кактуси", а всі 🍭 у коробку "Цукерки".</p>
+    </div>
+
+    <div class="game-area" id="game-area">
+        <div class="items-pool" id="pool">
+            <!-- Items generated by JS -->
+        </div>
+
+        <div class="boxes">
+            <div class="box" id="cactus-box" data-title="Кактуси" data-accept="cactus"></div>
+            <div class="box" id="candy-box" data-title="Цукерки" data-accept="candy"></div>
+        </div>
+    </div>
+
+    <div class="success-overlay" id="success-overlay">
+        <div class="success-message">Скриня відкрита!<br>Зібрав усіх!</div>
+    </div>
+
+    <!-- Аудіо файл -->
+    <audio id="success-sound" src="mp3/game.mp3" preload="auto"></audio>
+
+    <script>
+        const pool = document.getElementById('pool');
+        const boxes = document.querySelectorAll('.box');
+        const successOverlay = document.getElementById('success-overlay');
+        const successSound = document.getElementById('success-sound');
+        
+        let totalItems = 13;
+        let sortedItems = 0;
+
+        // Generate items
+        const items = [];
+        for(let i=0; i<6; i++) items.push({type: 'cactus', emoji: '🌵'});
+        for(let i=0; i<7; i++) items.push({type: 'candy', emoji: '🍭'});
+        
+        // Shuffle
+        items.sort(() => Math.random() - 0.5);
+
+        // Render
+        items.forEach((item, index) => {
+            const el = document.createElement('div');
+            el.classList.add('item');
+            el.textContent = item.emoji;
+            el.setAttribute('draggable', true);
+            el.setAttribute('data-type', item.type);
+            el.id = 'item-' + index;
+            
+            // Drag events
+            el.addEventListener('dragstart', dragStart);
+            el.addEventListener('dragend', dragEnd);
+            
+            pool.appendChild(el);
+        });
+
+        let draggedItem = null;
+
+        function dragStart(e) {
+            draggedItem = this;
+            setTimeout(() => this.style.opacity = '0.5', 0);
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function dragEnd() {
+            this.style.opacity = '1';
+            draggedItem = null;
+            boxes.forEach(b => b.classList.remove('drag-over'));
+        }
+
+        boxes.forEach(box => {
+            box.addEventListener('dragover', dragOver);
+            box.addEventListener('dragenter', dragEnter);
+            box.addEventListener('dragleave', dragLeave);
+            box.addEventListener('drop', dragDrop);
+        });
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function dragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function dragLeave() {
+            this.classList.remove('drag-over');
+        }
+
+        function dragDrop(e) {
+            this.classList.remove('drag-over');
+            if (draggedItem) {
+                const requiredType = this.getAttribute('data-accept');
+                const itemType = draggedItem.getAttribute('data-type');
+                
+                if (requiredType === itemType) {
+                    this.appendChild(draggedItem);
+                    draggedItem.setAttribute('draggable', false);
+                    draggedItem.style.cursor = 'default';
+                    sortedItems++;
+                    
+                    if (sortedItems === totalItems) {
+                        showSuccess();
+                    }
+                }
+            }
+        }
+
+        function showSuccess() {
+            successOverlay.classList.add('active');
+            successSound.play().catch(e => console.log("Audio play prevented:", e));
+            startConfetti();
+        }
+
+        // --- Simple Confetti Implementation ---
+        function startConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+
+            for (let i = 0; i < 200; i++) {
+                pieces.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + 100,
+                    vx: (Math.random() - 0.5) * 25,
+                    vy: (Math.random() - 1) * 25 - 5,
+                    size: Math.random() * 12 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                
+                pieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.5; // gravity
+                    p.rotation += p.rotationSpeed;
+                    
+                    if (p.y < canvas.height) active = true;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (active) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            animate();
+        }
+        
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            if(canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>

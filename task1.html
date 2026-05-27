@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скриня №1</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --box-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            background-color: var(--box-bg);
+            padding: 2rem 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px rgba(56, 189, 248, 0.2);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid #334155;
+            position: relative;
+            z-index: 10;
+        }
+        h1 {
+            color: var(--accent);
+            margin-top: 0;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+            font-size: 2.5rem;
+        }
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .alphabet {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            border: 1px dashed #475569;
+            word-break: break-all;
+        }
+        .encoded-word {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #fbbf24;
+            margin: 2rem 0;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        input {
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            text-transform: uppercase;
+            width: 60%;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        .error-border {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .success-message {
+            display: none;
+            font-size: 3rem;
+            color: var(--success);
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confetti"></canvas>
+    
+    <div class="container" id="game-container">
+        <h1>Скриня №1: Секретний пароль</h1>
+        <p>Розшифруй слово, використовуючи шифр Цезаря зі зсувом вправо на 2 кроки (А стає В, Б стає Г).</p>
+        
+        <div class="alphabet">
+            А Б В Г Ґ Д Е Є Ж З И І Ї Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ь Ю Я
+        </div>
+        
+        <div class="encoded-word">М В П Й М Х Н Ї</div>
+        
+        <div class="input-group" id="input-section">
+            <input type="text" id="password-input" placeholder="Введіть пароль" autocomplete="off">
+            <button onclick="checkPassword()">Відкрити</button>
+        </div>
+        
+        <div class="success-message" id="success-message">
+            Гарних канікул!
+        </div>
+    </div>
+
+    <!-- Аудіо файл. Припускаємо що ми у папці product, а звук у product/mp3 -->
+    <audio id="success-sound" src="mp3/holidays.mp3" preload="auto"></audio>
+
+    <script>
+        const input = document.getElementById('password-input');
+        const container = document.getElementById('game-container');
+        const inputSection = document.getElementById('input-section');
+        const successMessage = document.getElementById('success-message');
+        const successSound = document.getElementById('success-sound');
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        function checkPassword() {
+            const val = input.value.trim().toLowerCase();
+            if (val === 'канікули') {
+                // Success
+                inputSection.style.display = 'none';
+                successMessage.style.display = 'block';
+                successSound.play().catch(e => console.log("Audio play prevented:", e));
+                startConfetti();
+            } else {
+                // Error
+                container.classList.remove('shake');
+                input.classList.remove('error-border');
+                
+                // Trigger reflow to restart animation
+                void container.offsetWidth;
+                
+                container.classList.add('shake');
+                input.classList.add('error-border');
+                input.value = '';
+                
+                setTimeout(() => {
+                    input.classList.remove('error-border');
+                }, 1000);
+            }
+        }
+
+        // --- Simple Confetti Implementation ---
+        function startConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+
+            for (let i = 0; i < 150; i++) {
+                pieces.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + 100,
+                    vx: (Math.random() - 0.5) * 20,
+                    vy: (Math.random() - 1) * 20 - 5,
+                    size: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                
+                pieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.5; // gravity
+                    p.rotation += p.rotationSpeed;
+                    
+                    if (p.y < canvas.height) active = true;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (active) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            animate();
+        }
+        
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
