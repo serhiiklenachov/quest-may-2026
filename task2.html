@@ -6,117 +6,150 @@
     <title>Скриня №2</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --box-bg: #1e293b;
-            --text-color: #f8fafc;
-            --block-var: #f59e0b; /* orange */
-            --block-loop: #eab308; /* yellow */
-            --block-if: #3b82f6; /* blue */
-            --block-action: #10b981; /* green */
-            --accent: #8b5cf6;
-            --accent-hover: #7c3aed;
+            --box-bg: rgba(255, 255, 255, 0.15);
+            --text-color: #fff;
+            --block-var: #ff7e5f; /* orange/pink */
+            --block-loop: #feb47b; /* peach */
+            --block-if: #86a8e7; /* blue */
+            --block-action: #7f7fd5; /* purple */
+            --accent: #ffd700;
+            --accent-hover: #ffb300;
             --error: #ef4444;
             --success: #22c55e;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Comic Sans MS', 'Fredoka One', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden;
-            padding: 2rem 0;
+            overflow: hidden; /* No scroll as requested */
+            padding: 1rem;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         .container {
-            background-color: var(--box-bg);
+            background: var(--box-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px rgba(139, 92, 246, 0.2);
-            max-width: 650px;
-            width: 90%;
-            border: 1px solid #334155;
+            border-radius: 20px;
+            box-shadow: 0 10px 32px rgba(31, 38, 135, 0.3);
+            max-width: 900px;
+            width: 95%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             position: relative;
             z-index: 10;
         }
         h1 {
-            color: var(--accent);
+            color: #fff;
             margin-top: 0;
             text-align: center;
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             font-size: 2.5rem;
+            margin-bottom: 1.5rem;
         }
+        
+        #algo-section {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .column-left {
+            flex: 1;
+        }
+        .column-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         p.desc {
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 2rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
 
         /* Блоки алгоритму */
         .algorithm-wrapper {
-            background: #0f172a;
-            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
             border-radius: 12px;
-            border: 1px solid #475569;
-            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
         }
         
         .block {
-            padding: 12px 16px;
+            padding: 8px 12px;
             border-radius: 8px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-family: monospace;
-            font-size: 1.1rem;
-            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.3);
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-            position: relative;
         }
         .block-var { background-color: var(--block-var); color: #fff; }
         .block-loop { background-color: var(--block-loop); color: #fff; }
         .block-if { background-color: var(--block-if); color: #fff; }
         .block-action { background-color: var(--block-action); color: #fff; }
         
-        .nested-1 { margin-left: 30px; margin-top: -4px; border-top-left-radius: 0; }
-        .nested-2 { margin-left: 60px; margin-top: -4px; border-top-left-radius: 0; }
+        .nested-1 { margin-left: 20px; border-top-left-radius: 0; }
+        .nested-2 { margin-left: 40px; border-top-left-radius: 0; }
 
         .input-group {
             display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 2rem;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
         }
         input {
-            padding: 12px 20px;
-            font-size: 1.5rem;
-            border: 2px solid #475569;
-            border-radius: 8px;
-            background: #0f172a;
+            padding: 15px;
+            font-size: 2rem;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.2);
             color: white;
             text-align: center;
-            width: 40%;
+            width: 100%;
+            box-sizing: border-box;
             transition: all 0.3s;
         }
+        input::placeholder { color: rgba(255,255,255,0.7); }
         input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+            background: rgba(255,255,255,0.3);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
         button {
-            padding: 12px 25px;
-            font-size: 1.2rem;
+            padding: 15px;
+            font-size: 1.5rem;
             background-color: var(--accent);
-            color: white;
+            color: #1e293b;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.3s, transform 0.1s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         button:hover {
             background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
         button:active {
             transform: scale(0.95);
@@ -127,14 +160,18 @@
         }
         .error-border {
             border-color: var(--error) !important;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+            background: rgba(239, 68, 68, 0.2) !important;
         }
         .error-msg {
-            color: var(--error);
+            color: #ffcccc;
+            background: rgba(239, 68, 68, 0.8);
+            padding: 10px;
+            border-radius: 8px;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 15px;
             font-weight: bold;
             display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         
         @keyframes shake {
@@ -148,16 +185,81 @@
         .success-message {
             display: none;
             font-size: 2.5rem;
-            color: var(--success);
+            color: #fff;
             font-weight: bold;
             text-align: center;
-            text-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
             animation: pulseSuccess 1.5s infinite alternate;
         }
 
         @keyframes pulseSuccess {
-            0% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
-            100% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 30px rgba(34, 197, 94, 0.9); }
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* Planets Background */
+        .planets-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatPlanet linear infinite;
+        }
+        .planet1 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 30% 30%, #ff9a9e, #fecfef);
+            top: 10%;
+            left: -10%;
+            animation-duration: 25s;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 0 0 20px rgba(255,154,158,0.5);
+        }
+        .planet2 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #a1c4fd, #c2e9fb);
+            bottom: 20%;
+            right: -5%;
+            animation-duration: 18s;
+            animation-delay: -5s;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2), 0 0 15px rgba(161,196,253,0.5);
+        }
+        .planet3 {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #f6d365, #fda085);
+            top: 60%;
+            left: 15%;
+            animation-duration: 15s;
+            animation-delay: -10s;
+            box-shadow: inset -3px -3px 8px rgba(0,0,0,0.2), 0 0 10px rgba(246,211,101,0.5);
+        }
+        .planet4 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle at 30% 30%, #cd9cf2, #f6f3ff);
+            top: -5%;
+            right: 15%;
+            animation-duration: 35s;
+            animation-delay: -2s;
+            opacity: 0.4;
+            box-shadow: inset -15px -15px 30px rgba(0,0,0,0.1), 0 0 25px rgba(205,156,242,0.3);
+        }
+        
+        @keyframes floatPlanet {
+            0% { transform: translateY(0) rotate(0deg) translateX(0); }
+            33% { transform: translateY(-20px) rotate(120deg) translateX(10px); }
+            66% { transform: translateY(15px) rotate(240deg) translateX(-15px); }
+            100% { transform: translateY(0) rotate(360deg) translateX(0); }
         }
 
         canvas {
@@ -167,43 +269,53 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 2;
         }
     </style>
 </head>
 <body>
+    <div class="planets-bg">
+        <div class="planet planet1"></div>
+        <div class="planet planet2"></div>
+        <div class="planet planet3"></div>
+        <div class="planet planet4"></div>
+    </div>
     <canvas id="confetti"></canvas>
     
     <div class="container" id="game-container">
         <h1>Скриня №2: Дешифрування алгоритму</h1>
         
         <div id="algo-section">
-            <div class="algorithm-wrapper">
-                <div class="block block-var">Змінна X = 15</div>
-                
-                <div class="block block-loop">Початок циклу: Повторити 3 рази</div>
-                <div class="block block-action nested-1">X = X + 9</div>
-                <div class="block block-loop">Кінець циклу</div>
-                
-                <div class="block block-if">Якщо X ділиться на 2 без остачі (парне), тоді:</div>
-                <div class="block block-action nested-1">X = X / 2</div>
-                <div class="block block-action nested-1">X = X * 3</div>
-                <div class="block block-if">Інакше:</div>
-                <div class="block block-action nested-1">X = X + 100</div>
-                
-                <div class="block block-if">Якщо X > 50 ТА X < 70, тоді:</div>
-                <div class="block block-action nested-1">X = X + 4</div>
-                <div class="block block-if">Інакше:</div>
-                <div class="block block-action nested-1">X = 0</div>
+            <div class="column-left">
+                <div class="algorithm-wrapper">
+                    <div class="block block-var">Змінна X = 15</div>
+                    
+                    <div class="block block-loop">Початок циклу: Повторити 3 рази</div>
+                    <div class="block block-action nested-1">X = X + 9</div>
+                    <div class="block block-loop">Кінець циклу</div>
+                    
+                    <div class="block block-if">Якщо X ділиться на 2 без остачі (парне):</div>
+                    <div class="block block-action nested-1">X = X / 2</div>
+                    <div class="block block-action nested-1">X = X * 3</div>
+                    <div class="block block-if">Інакше:</div>
+                    <div class="block block-action nested-1">X = X + 100</div>
+                    
+                    <div class="block block-if">Якщо X > 50 ТА X < 70, тоді:</div>
+                    <div class="block block-action nested-1">X = X + 4</div>
+                    <div class="block block-if">Інакше:</div>
+                    <div class="block block-action nested-1">X = 0</div>
+                </div>
             </div>
 
-            <p class="desc">Виконай цей алгоритм крок за кроком та введи фінальне значення змінної X, щоб зламати скриню.</p>
-            
-            <div class="input-group">
-                <input type="number" id="code-input" placeholder="Код (число)" autocomplete="off">
-                <button onclick="checkCode()">Ввести код</button>
+            <div class="column-right">
+                <p class="desc">Виконай цей алгоритм крок за кроком та введи фінальне значення змінної X, щоб зламати скриню.</p>
+                
+                <div class="input-group">
+                    <input type="number" id="code-input" placeholder="Код (число)" autocomplete="off">
+                    <button onclick="checkCode()">Ввести код</button>
+                    <div class="error-msg" id="error-msg">Помилка обчислень, спробуй ще раз!</div>
+                </div>
             </div>
-            <div class="error-msg" id="error-msg">Помилка обчислень, спробуй ще раз!</div>
         </div>
         
         <div class="success-message" id="success-message">

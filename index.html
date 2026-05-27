@@ -6,15 +6,16 @@
     <title>Шкільний Квест - Травень 2026</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --box-bg: #1e293b;
-            --text-color: #f8fafc;
-            --accent: #38bdf8;
-            --hover: #0ea5e9;
+            --accent: #ffd700;
+            --hover: #ffb300;
+            --text-color: #ffffff;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Comic Sans MS', 'Fredoka One', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: var(--text-color);
             display: flex;
             flex-direction: column;
@@ -23,47 +24,79 @@
             margin: 0;
             padding: 2rem;
         }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         h1 {
-            color: var(--accent);
-            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
-            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.5);
+            font-size: 3.5rem;
             margin-bottom: 2rem;
             text-align: center;
+            letter-spacing: 2px;
         }
         .task-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
+            z-index: 10;
+        }
+        @media (max-width: 600px) {
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
         }
         .task-card {
-            background-color: var(--box-bg);
-            border: 2px solid #334155;
-            border-radius: 12px;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
             text-decoration: none;
-            color: var(--text-color);
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            color: #fff;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+            position: relative;
+            z-index: 10;
         }
         .task-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+            transform: translateY(-10px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 15px 40px 0 rgba(31, 38, 135, 0.5), inset 0 0 20px rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.25);
         }
         .task-card h2 {
             margin-top: 0;
             color: var(--accent);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            font-size: 2rem;
         }
         .task-card p {
-            color: #94a3b8;
+            color: #f8fafc;
+            font-size: 1.2rem;
             margin-bottom: 0;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-    <h1>Локація: Інформатика</h1>
+    <canvas id="confetti"></canvas>
+    <h1 style="z-index: 10; position: relative;">Локація: Інформатика</h1>
     <div class="task-grid">
         <a href="task1.html" class="task-card">
             <h2>Скриня №1</h2>
@@ -82,5 +115,59 @@
             <p>Знайди пару</p>
         </a>
     </div>
+
+    <script>
+        // Start background confetti
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const pieces = [];
+        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+
+        for (let i = 0; i < 50; i++) {
+            pieces.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 2,
+                vy: Math.random() * 2 + 1,
+                size: Math.random() * 8 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * 360,
+                rotationSpeed: (Math.random() - 0.5) * 5
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            pieces.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.rotation += p.rotationSpeed;
+                
+                if (p.y > canvas.height) {
+                    p.y = -20;
+                    p.x = Math.random() * canvas.width;
+                }
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
 </body>
 </html>

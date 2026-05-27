@@ -16,8 +16,6 @@
         body {
             font-family: 'Comic Sans MS', 'Fredoka One', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -26,11 +24,6 @@
             margin: 0;
             overflow: hidden;
             padding: 1rem;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         .container {
             background: var(--box-bg);
@@ -153,7 +146,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        canvas {
+        .bg-canvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -162,10 +155,14 @@
             pointer-events: none;
             z-index: 1;
         }
+        #confetti {
+            z-index: 20;
+        }
     </style>
 </head>
 <body>
-    <canvas id="confetti"></canvas>
+    <canvas id="matrix" class="bg-canvas"></canvas>
+    <canvas id="confetti" class="bg-canvas"></canvas>
     
     <div class="container" id="game-container">
         <h1>Скриня №1: Секретний пароль</h1>
@@ -191,6 +188,41 @@
     <audio id="success-sound" src="mp3/holidays.mp3" preload="auto"></audio>
 
     <script>
+        // Matrix Background
+        const mCanvas = document.getElementById('matrix');
+        const mCtx = mCanvas.getContext('2d');
+        
+        mCanvas.width = window.innerWidth;
+        mCanvas.height = window.innerHeight;
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+        const fontSize = 14;
+        const columns = mCanvas.width / fontSize;
+        const drops = [];
+        
+        for(let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        
+        function drawMatrix() {
+            mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+            
+            mCtx.fillStyle = 'rgba(0, 255, 65, 0.5)'; // Matrix green with opacity
+            mCtx.font = fontSize + 'px monospace';
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+
         const input = document.getElementById('password-input');
         const container = document.getElementById('game-container');
         const inputSection = document.getElementById('input-section');
@@ -281,6 +313,10 @@
             const canvas = document.getElementById('confetti');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            if (mCanvas) {
+                mCanvas.width = window.innerWidth;
+                mCanvas.height = window.innerHeight;
+            }
         });
     </script>
 </body>
