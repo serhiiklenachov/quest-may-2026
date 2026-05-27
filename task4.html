@@ -55,17 +55,19 @@
 
         .game-board {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(3, 1fr);
             gap: 15px;
             perspective: 1000px;
             z-index: 10;
-            max-width: 700px;
+            max-width: 900px;
             width: 95%;
+            height: 65vh; /* Fits automatically to window height */
         }
 
         .card {
             width: 100%;
-            aspect-ratio: 3/4;
+            height: 100%;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.5s;
@@ -116,6 +118,38 @@
             transform: rotateY(180deg);
         }
 
+        @keyframes mexicanDance {
+            0% { transform: rotateY(180deg) scale(1) translateY(0); }
+            25% { transform: rotateY(180deg) scale(1.1) translateY(-10px) rotate(-10deg); }
+            50% { transform: rotateY(180deg) scale(1.1) translateY(0) rotate(10deg); }
+            75% { transform: rotateY(180deg) scale(1.1) translateY(-10px) rotate(-10deg); }
+            100% { transform: rotateY(180deg) scale(1) translateY(0); }
+        }
+
+        .card.mexican-dance .card-front {
+            animation: mexicanDance 1s infinite alternate;
+            background-color: #fcd34d !important;
+            border-color: #f59e0b !important;
+        }
+
+        .card.mexican-dance .card-front::before {
+            content: '🤠';
+            position: absolute;
+            top: -15px;
+            font-size: 3rem;
+            z-index: 2;
+        }
+        
+        .card.mexican-dance .card-front::after {
+            content: '〰️';
+            position: absolute;
+            bottom: 10px;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #000;
+            z-index: 2;
+        }
+
         .success-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -158,8 +192,10 @@
         
         @media (max-width: 600px) {
             .game-board {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(6, 1fr);
                 gap: 10px;
+                height: 70vh;
             }
             .card-face {
                 font-size: 2.2rem;
@@ -167,8 +203,10 @@
         }
         @media (max-width: 400px) {
             .game-board {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(6, 1fr);
                 gap: 5px;
+                height: 75vh;
             }
             .card-face {
                 font-size: 1.8rem;
@@ -181,7 +219,7 @@
     
     <div class="header">
         <h1>Скриня №4: Знайди пару</h1>
-        <p>Знайди всі пари. Пам'ятай, класи 6 та 7 — це суперсила, вони також складають пару!</p>
+        <p>Знайди всі пари.</p>
     </div>
 
     <div class="game-board" id="board">
@@ -202,7 +240,7 @@
         
         const symbols = [
             '💀', '💀', '🦅', '🦅', '🐻', '🐻', '🎸', '🎸', '🦇', '🦇', 
-            '🌵', '🌵', '⭐', '⭐', '🚀', '🚀', '🔮', '🔮', '6', '7'
+            '🌵', '🌵', '⭐', '⭐', '🚀', '🚀', '6', '7'
         ];
         // Shuffle
         symbols.sort(() => Math.random() - 0.5);
@@ -258,9 +296,13 @@
             }
 
             if (isMatch) {
+                if ((val1 === '6' && val2 === '7') || (val1 === '7' && val2 === '6')) {
+                    firstCard.classList.add('mexican-dance');
+                    secondCard.classList.add('mexican-dance');
+                }
                 disableCards();
                 matchedPairs++;
-                if (matchedPairs === 10) {
+                if (matchedPairs === 9) {
                     setTimeout(showSuccess, 500);
                 }
             } else {
