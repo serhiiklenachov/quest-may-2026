@@ -18,6 +18,8 @@
             background-color: #0f172a;
             background-image: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%), 
                               repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 20px, transparent 20px, transparent 40px);
+            background-size: 100% 100%, 80px 80px;
+            animation: moveStripes 3s linear infinite;
             color: var(--text-color);
             display: flex;
             flex-direction: column;
@@ -27,6 +29,10 @@
             overflow-x: hidden;
             padding: 2rem 0;
             user-select: none;
+        }
+        @keyframes moveStripes {
+            0% { background-position: center, 0 0; }
+            100% { background-position: center, 80px 80px; }
         }
         .header {
             text-align: center;
@@ -372,6 +378,14 @@
                     
                     if (sortedItems === totalItems) {
                         showSuccess();
+                    } else {
+                        // Increase speed of remaining items
+                        activeItems.forEach(item => {
+                            if (!item.isSorted && !item.isDragging) {
+                                item.vx *= 1.25;
+                                item.vy *= 1.25;
+                            }
+                        });
                     }
                 }
             }
