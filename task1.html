@@ -132,18 +132,34 @@
             100% { transform: translateX(0); }
         }
 
+        .success-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .success-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
         .success-message {
-            display: none;
             font-size: 3rem;
             color: #fff;
             font-weight: bold;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.9), 0 0 60px rgba(16, 185, 129, 0.6);
+            transform: scale(0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .success-overlay.active .success-message {
+            transform: scale(1);
         }
 
         .bg-canvas {
@@ -178,10 +194,10 @@
             <input type="text" id="password-input" placeholder="Введіть пароль" autocomplete="off">
             <button onclick="checkPassword()">Відкрити</button>
         </div>
-        
-        <div class="success-message" id="success-message">
-            Гарних канікул!
-        </div>
+    </div>
+
+    <div class="success-overlay" id="success-overlay">
+        <div class="success-message">Скриня відкрита!<br>Пароль розгадано!</div>
     </div>
 
     <!-- Аудіо файл. Припускаємо що ми у папці product, а звук у product/mp3 -->
@@ -226,7 +242,7 @@
         const input = document.getElementById('password-input');
         const container = document.getElementById('game-container');
         const inputSection = document.getElementById('input-section');
-        const successMessage = document.getElementById('success-message');
+        const successOverlay = document.getElementById('success-overlay');
         const successSound = document.getElementById('success-sound');
 
         input.addEventListener('keypress', function(e) {
@@ -237,8 +253,7 @@
             const val = input.value.trim().toLowerCase();
             if (val === 'канікули') {
                 // Success
-                inputSection.style.display = 'none';
-                successMessage.style.display = 'block';
+                successOverlay.classList.add('active');
                 successSound.play().catch(e => console.log("Audio play prevented:", e));
                 startConfetti();
             } else {

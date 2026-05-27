@@ -175,19 +175,34 @@
             100% { transform: translateX(0); }
         }
 
+        .success-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        .success-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
         .success-message {
-            display: none;
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: #fff;
             font-weight: bold;
             text-align: center;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
-            animation: pulseSuccess 1.5s infinite alternate;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.9), 0 0 60px rgba(16, 185, 129, 0.6);
+            transform: scale(0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        @keyframes pulseSuccess {
-            0% { transform: scale(1); opacity: 0.9; }
-            100% { transform: scale(1.05); opacity: 1; }
+        .success-overlay.active .success-message {
+            transform: scale(1);
         }
 
         /* Planets Background */
@@ -296,7 +311,7 @@
                     <div class="block block-if">Якщо X > 50 ТА X < 70, тоді:</div>
                     <div class="block block-action nested-1">X = X + 4</div>
                     <div class="block block-if">Інакше:</div>
-                    <div class="block block-action nested-1">X = 0</div>
+                    <div class="block block-action nested-1">X = X - 3</div>
                 </div>
             </div>
 
@@ -310,10 +325,10 @@
                 </div>
             </div>
         </div>
-        
-        <div class="success-message" id="success-message">
-            Доступ дозволено!<br>Код: six seven
-        </div>
+    </div>
+
+    <div class="success-overlay" id="success-overlay">
+        <div class="success-message">Скриня відкрита!<br>Алгоритм дешифровано!</div>
     </div>
 
     <!-- Аудіо файл -->
@@ -323,7 +338,7 @@
         const input = document.getElementById('code-input');
         const container = document.getElementById('game-container');
         const algoSection = document.getElementById('algo-section');
-        const successMessage = document.getElementById('success-message');
+        const successOverlay = document.getElementById('success-overlay');
         const errorMsg = document.getElementById('error-msg');
         const successSound = document.getElementById('success-sound');
 
@@ -335,8 +350,7 @@
             const val = input.value.trim();
             if (val === '67') {
                 // Success
-                algoSection.style.display = 'none';
-                successMessage.style.display = 'block';
+                successOverlay.classList.add('active');
                 successSound.play().catch(e => console.log("Audio play prevented:", e));
                 startConfetti();
             } else {
