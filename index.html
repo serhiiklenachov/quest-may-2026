@@ -92,11 +92,73 @@
             pointer-events: none;
             z-index: 1;
         }
+        .timer-container {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 30px;
+            margin-bottom: 2rem;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .timer-display {
+            font-size: 4rem;
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin: 10px 0;
+            letter-spacing: 5px;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+        .timer-controls input {
+            width: 60px;
+            padding: 5px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-align: center;
+        }
+        .timer-controls button {
+            padding: 8px 20px;
+            font-size: 1.2rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #1e293b;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .timer-controls button:hover {
+            background: var(--hover);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
     <canvas id="confetti"></canvas>
     <h1 style="z-index: 10; position: relative;">Локація: Інформатика</h1>
+    
+    <div class="timer-container">
+        <div class="timer-display" id="timer-display">08:00</div>
+        <div class="timer-controls">
+            <input type="number" id="timer-min" value="8" min="0" max="60" title="Хвилини">
+            <span style="font-size: 1.5rem; font-weight: bold;">:</span>
+            <input type="number" id="timer-sec" value="0" min="0" max="59" title="Секунди">
+            <button id="timer-start">Старт</button>
+        </div>
+    </div>
     <div class="task-grid">
         <a href="task1.html" class="task-card">
             <h2>Скриня №1</h2>
@@ -117,6 +179,125 @@
     </div>
 
     <script>
+        // Timer Logic with Web Audio API sound
+        const timerDisplay = document.getElementById('timer-display');
+        const minInput = document.getElementById('timer-min');
+        const secInput = document.getElementById('timer-sec');
+        const startBtn = document.getElementById('timer-start');
+        
+        let timerInterval;
+        let totalSeconds = 0;
+        let audioCtx;
+
+        function playTick() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            // Short high-pitch tick like a clock
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.05);
+            
+            gain.gain.setValueAtTime(1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function updateDisplay(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+        }
+
+        startBtn.addEventListener('click', () => {
+            if (startBtn.textContent === 'Старт') {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                totalSeconds = parseInt(minInput.value) * 60 + parseInt(secInput.value);
+                if (totalSeconds <= 0) return;
+                
+                updateDisplay(totalSeconds);
+                startBtn.textContent = 'Стоп';
+                minInput.disabled = true;
+                secInput.disabled = true;
+                
+                timerInterval = setInterval(() => {
+                    totalSeconds--;
+                    updateDisplay(totalSeconds);
+                    playTick();
+                    
+                    if (totalSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        startBtn.textContent = 'Старт';
+                        minInput.disabled = false;
+                        secInput.disabled = false;
+                        
+                        // Stadium horn sound (ту тутуту)
+                        function playHorn(time, duration) {
+                            const osc = audioCtx.createOscillator();
+                            const osc2 = audioCtx.createOscillator(); // for detune
+                            const gain = audioCtx.createGain();
+                            
+                            osc.type = 'sawtooth';
+                            osc2.type = 'sawtooth';
+                            
+                            // Base frequency for a stadium horn (around 300Hz)
+                            osc.frequency.value = 300;
+                            osc2.frequency.value = 305; // Slightly detuned for "raspy" effect
+                            
+                            osc.connect(gain);
+                            osc2.connect(gain);
+                            gain.connect(audioCtx.destination);
+                            
+                            gain.gain.setValueAtTime(0, time);
+                            gain.gain.linearRampToValueAtTime(1, time + 0.05);
+                            gain.gain.setValueAtTime(1, time + duration - 0.05);
+                            gain.gain.linearRampToValueAtTime(0, time + duration);
+                            
+                            osc.start(time);
+                            osc2.start(time);
+                            osc.stop(time + duration);
+                            osc2.stop(time + duration);
+                        }
+                        
+                        const now = audioCtx.currentTime;
+                        // "Ту" (long)
+                        playHorn(now, 0.4);
+                        // "ту" (short)
+                        playHorn(now + 0.5, 0.2);
+                        // "ту" (short)
+                        playHorn(now + 0.75, 0.2);
+                        // "ту" (long)
+                        playHorn(now + 1.0, 0.6);
+                    }
+                }, 1000);
+            } else {
+                clearInterval(timerInterval);
+                startBtn.textContent = 'Старт';
+                minInput.disabled = false;
+                secInput.disabled = false;
+            }
+        });
+        
+        [minInput, secInput].forEach(input => {
+            input.addEventListener('input', () => {
+                let m = parseInt(minInput.value) || 0;
+                let s = parseInt(secInput.value) || 0;
+                updateDisplay(m * 60 + s);
+            });
+        });
+
         // Start background confetti
         const canvas = document.getElementById('confetti');
         const ctx = canvas.getContext('2d');
