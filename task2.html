@@ -19,9 +19,7 @@
         }
         body {
             font-family: 'Comic Sans MS', 'Fredoka One', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(45deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -30,11 +28,6 @@
             margin: 0;
             overflow: hidden; /* No scroll as requested */
             padding: 1rem;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         .container {
             background: var(--box-bg);

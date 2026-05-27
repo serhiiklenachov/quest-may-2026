@@ -15,9 +15,9 @@
         }
         body {
             font-family: 'Fredoka One', 'Comic Sans MS', sans-serif;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #8b5cf6);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background-color: #0f172a;
+            background-image: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%), 
+                              repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 20px, transparent 20px, transparent 40px);
             color: var(--text-color);
             display: flex;
             flex-direction: column;
@@ -27,11 +27,6 @@
             overflow-x: hidden;
             padding: 2rem 0;
             user-select: none;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         .header {
             text-align: center;
@@ -266,8 +261,8 @@
                 el: el,
                 x: x,
                 y: y,
-                vx: (Math.random() - 0.5) * 4,
-                vy: (Math.random() - 0.5) * 4,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
                 isDragging: false,
                 isSorted: false,
                 size: 60
